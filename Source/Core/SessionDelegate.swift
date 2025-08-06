@@ -70,7 +70,7 @@ protocol SessionStateProvider: AnyObject, Sendable {
 // MARK: URLSessionDelegate
 
 extension SessionDelegate: URLSessionDelegate {
-    open func urlSession(_ session: URLSession, didBecomeInvalidWithError error: (any Error)?) {
+    public func urlSession(_ session: URLSession, didBecomeInvalidWithError error: (any Error)?) {
         eventMonitor?.urlSession(session, didBecomeInvalidWithError: error)
 
         stateProvider?.cancelRequestsForSessionInvalidation(with: error)
@@ -83,7 +83,7 @@ extension SessionDelegate: URLSessionTaskDelegate {
     /// Result of a `URLAuthenticationChallenge` evaluation.
     typealias ChallengeEvaluation = (disposition: URLSession.AuthChallengeDisposition, credential: URLCredential?, error: AFError?)
 
-    open func urlSession(_ session: URLSession,
+    public func urlSession(_ session: URLSession,
                          task: URLSessionTask,
                          didReceive challenge: URLAuthenticationChallenge,
                          completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void) {
@@ -160,7 +160,7 @@ extension SessionDelegate: URLSessionTaskDelegate {
         return (.useCredential, credential, nil)
     }
 
-    open func urlSession(_ session: URLSession,
+    public func urlSession(_ session: URLSession,
                          task: URLSessionTask,
                          didSendBodyData bytesSent: Int64,
                          totalBytesSent: Int64,
@@ -175,7 +175,7 @@ extension SessionDelegate: URLSessionTaskDelegate {
                                                                 totalBytesExpectedToSend: totalBytesExpectedToSend)
     }
 
-    open func urlSession(_ session: URLSession,
+    public func urlSession(_ session: URLSession,
                          task: URLSessionTask,
                          needNewBodyStream completionHandler: @escaping (InputStream?) -> Void) {
         eventMonitor?.urlSession(session, taskNeedsNewBodyStream: task)
@@ -189,7 +189,7 @@ extension SessionDelegate: URLSessionTaskDelegate {
         completionHandler(request.inputStream())
     }
 
-    open func urlSession(_ session: URLSession,
+    public func urlSession(_ session: URLSession,
                          task: URLSessionTask,
                          willPerformHTTPRedirection response: HTTPURLResponse,
                          newRequest request: URLRequest,
@@ -203,7 +203,7 @@ extension SessionDelegate: URLSessionTaskDelegate {
         }
     }
 
-    open func urlSession(_ session: URLSession, task: URLSessionTask, didFinishCollecting metrics: URLSessionTaskMetrics) {
+    public func urlSession(_ session: URLSession, task: URLSessionTask, didFinishCollecting metrics: URLSessionTaskMetrics) {
         eventMonitor?.urlSession(session, task: task, didFinishCollecting: metrics)
 
         stateProvider?.request(for: task)?.didGatherMetrics(metrics)
@@ -211,7 +211,7 @@ extension SessionDelegate: URLSessionTaskDelegate {
         stateProvider?.didGatherMetricsForTask(task)
     }
 
-    open func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: (any Error)?) {
+    public func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: (any Error)?) {
 //        NSLog("URLSession: \(session), task: \(task), didCompleteWithError: \(error)")
         eventMonitor?.urlSession(session, task: task, didCompleteWithError: error)
 
@@ -223,7 +223,7 @@ extension SessionDelegate: URLSessionTaskDelegate {
     }
 
     @available(macOS 10.13, iOS 11.0, tvOS 11.0, watchOS 4.0, *)
-    open func urlSession(_ session: URLSession, taskIsWaitingForConnectivity task: URLSessionTask) {
+    public func urlSession(_ session: URLSession, taskIsWaitingForConnectivity task: URLSessionTask) {
         eventMonitor?.urlSession(session, taskIsWaitingForConnectivity: task)
     }
 }
@@ -231,7 +231,7 @@ extension SessionDelegate: URLSessionTaskDelegate {
 // MARK: URLSessionDataDelegate
 
 extension SessionDelegate: URLSessionDataDelegate {
-    open func urlSession(_ session: URLSession,
+    public func urlSession(_ session: URLSession,
                          dataTask: URLSessionDataTask,
                          didReceive response: URLResponse,
                          completionHandler: @escaping @Sendable (URLSession.ResponseDisposition) -> Void) {
@@ -250,7 +250,7 @@ extension SessionDelegate: URLSessionDataDelegate {
         }
     }
 
-    open func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
+    public func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
         eventMonitor?.urlSession(session, dataTask: dataTask, didReceive: data)
 
         if let request = request(for: dataTask, as: DataRequest.self) {
@@ -263,7 +263,7 @@ extension SessionDelegate: URLSessionDataDelegate {
         }
     }
 
-    open func urlSession(_ session: URLSession,
+    public func urlSession(_ session: URLSession,
                          dataTask: URLSessionDataTask,
                          willCacheResponse proposedResponse: CachedURLResponse,
                          completionHandler: @escaping (CachedURLResponse?) -> Void) {
@@ -283,7 +283,7 @@ extension SessionDelegate: URLSessionDataDelegate {
 
 @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
 extension SessionDelegate: URLSessionWebSocketDelegate {
-    open func urlSession(_ session: URLSession, webSocketTask: URLSessionWebSocketTask, didOpenWithProtocol protocol: String?) {
+    public func urlSession(_ session: URLSession, webSocketTask: URLSessionWebSocketTask, didOpenWithProtocol protocol: String?) {
         // TODO: Add event monitor method.
 //        NSLog("URLSession: \(session), webSocketTask: \(webSocketTask), didOpenWithProtocol: \(`protocol` ?? "None")")
         guard let request = request(for: webSocketTask, as: WebSocketRequest.self) else {
@@ -293,7 +293,7 @@ extension SessionDelegate: URLSessionWebSocketDelegate {
         request.didConnect(protocol: `protocol`)
     }
 
-    open func urlSession(_ session: URLSession, webSocketTask: URLSessionWebSocketTask, didCloseWith closeCode: URLSessionWebSocketTask.CloseCode, reason: Data?) {
+    public func urlSession(_ session: URLSession, webSocketTask: URLSessionWebSocketTask, didCloseWith closeCode: URLSessionWebSocketTask.CloseCode, reason: Data?) {
         // TODO: Add event monitor method.
 //        NSLog("URLSession: \(session), webSocketTask: \(webSocketTask), didCloseWithCode: \(closeCode.rawValue), reason: \(reason ?? Data())")
         guard let request = request(for: webSocketTask, as: WebSocketRequest.self) else {
@@ -311,7 +311,7 @@ extension SessionDelegate: URLSessionWebSocketDelegate {
 // MARK: URLSessionDownloadDelegate
 
 extension SessionDelegate: URLSessionDownloadDelegate {
-    open func urlSession(_ session: URLSession,
+    public func urlSession(_ session: URLSession,
                          downloadTask: URLSessionDownloadTask,
                          didResumeAtOffset fileOffset: Int64,
                          expectedTotalBytes: Int64) {
@@ -328,7 +328,7 @@ extension SessionDelegate: URLSessionDownloadDelegate {
                                                totalBytesExpectedToWrite: expectedTotalBytes)
     }
 
-    open func urlSession(_ session: URLSession,
+    public func urlSession(_ session: URLSession,
                          downloadTask: URLSessionDownloadTask,
                          didWriteData bytesWritten: Int64,
                          totalBytesWritten: Int64,
@@ -347,7 +347,7 @@ extension SessionDelegate: URLSessionDownloadDelegate {
                                                totalBytesExpectedToWrite: totalBytesExpectedToWrite)
     }
 
-    open func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didFinishDownloadingTo location: URL) {
+    public func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didFinishDownloadingTo location: URL) {
         eventMonitor?.urlSession(session, downloadTask: downloadTask, didFinishDownloadingTo: location)
 
         guard let request = request(for: downloadTask, as: DownloadRequest.self) else {
