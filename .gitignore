@@ -40,3 +40,10 @@ Carthage/Build
 .UlyssesRoot
 .Ulysses-Settings.plist
 .Ulysses-Group.plist
+
+# wrangler files
+.wrangler
+.dev.vars*
+!.dev.vars.example
+.env*
+!.env.example
