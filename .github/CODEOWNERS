@@ -1,0 +1,10 @@
+# Default owner for all repository changes
+* @aalmanasir
+
+# GitHub automation and CI configuration
+.github/ @aalmanasir
+
+# Package, dependency, and release-sensitive files
+Package.swift @aalmanasir
+Gemfile @aalmanasir
+Gemfile.lock @aalmanasir
